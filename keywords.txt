@@ -1,0 +1,34 @@
+#######################################
+# Syntax Coloring Map For Led7Segment
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Led7Segment	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+clearDisplay	KEYWORD2
+turnOn	KEYWORD2
+turnOff	KEYWORD2
+setBrightness	KEYWORD2
+setDots	KEYWORD2
+showNumber	KEYWORD2
+setSegments	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+SEG_T   LITERAL1
+SEG_TR  LITERAL1
+SEG_BR  LITERAL1
+SEG_B   LITERAL1
+SEG_BL  LITERAL1
+SEG_TL  LITERAL1
+SEG_M   LITERAL1
+SEG_P   LITERAL1

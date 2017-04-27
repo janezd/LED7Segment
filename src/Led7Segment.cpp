@@ -72,7 +72,7 @@ void Led7Segment::clearDisplay(uint8_t pos, uint8_t length, bool zeros)
 {
     clipLength(pos, length);
     clearDigits(pos, length, zeros);
-    update();
+    update(pos, length);
 }
 
 void Led7Segment::turnOn()
@@ -95,54 +95,71 @@ void Led7Segment::setBrightness(uint8_t brightness)
 
 void Led7Segment::setDots(uint8_t dots) {
     m_dots = dots << 4;
-    update();
+    update(0, 4);
 }
 
-void Led7Segment::showNumber(int num, uint8_t pos, uint8_t length, bool leading_zero)
+bool Led7Segment::showNumber(int num, uint8_t pos, uint8_t length, bool leading_zero)
 {
+    #define CHECK_SPACE { if (rpos == pos) return error(pos, length); }
+
+    clipLength(pos, length);
+    int8_t rpos = pos + length;
+    CHECK_SPACE;
+    clearDigits(pos, length, leading_zero);
     bool negative = num < 0;
     num = abs(num);
-    clipLength(pos, length);
-    if (!length) return;
-    clearDigits(pos, length, leading_zero);
-    pos += length;
     do {
-        digits[--pos] = digitToSegment[num % 10];
+        CHECK_SPACE;
+        digits[--rpos] = digitToSegment[num % 10];
         num /= 10;
-    } while (--length && num);
-    if (negative && length) {
-        digits[--pos] = 64;
+    } while (num);
+    if (negative) {
+        CHECK_SPACE;
+        digits[leading_zero ? pos : --rpos] = SEG_M;
     }
-    update();
+    update(pos, length);
+    return true;
+
+    #undef CHECK_SPACE
 }
 
-void Led7Segment::setSegments(uint8_t data[], uint8_t pos=0, uint8_t length=4)
+void Led7Segment::setSegments(uint8_t data[], uint8_t pos, uint8_t length)
 {
     clipLength(pos, length);
     memcpy(digits + pos, data, length);
+    update(pos, length);
 }
 
 /****** Protected stuff ******/
 
-void Led7Segment::update()
+bool Led7Segment::error(uint8_t pos, uint8_t length) {
+    memset(digits + pos, digitToSegment[0xe], length);
+    update(pos, length);
+    return false;
+}
+
+
+// The code below comes almost verbatim from avishorp@gmail.com
+
+void Led7Segment::update(uint8_t pos, uint8_t length)
 {
     // Write COMM1
     start();
     writeByte(TM1637_I2C_COMM1);
     stop();
 
-    // Write COMM2 + first digit address + data bytes
+    // Write COMM2 | first digit address,  data bytes
     start();
-    writeByte(TM1637_I2C_COMM2);
-    uint8_t tdots = m_dots;
-    for (uint8_t k=0; k < 4; k++, tdots <<= 1) {
+    writeByte(TM1637_I2C_COMM2 | pos);
+    uint8_t tdots = m_dots << pos;
+    for (uint8_t k=pos; k < pos + length; k++, tdots <<= 1) {
         writeByte(digits[k] | (tdots & 0x80));
     }
     stop();
 
-    // Write COMM3 + brightness
+    // Write COMM3 | brightness
     start();
-    writeByte(TM1637_I2C_COMM3 + m_brightness);
+    writeByte(TM1637_I2C_COMM3 | m_brightness);
     stop();
 }
 
@@ -203,7 +220,6 @@ bool Led7Segment::writeByte(uint8_t b)
   uint8_t ack = digitalRead(m_pinDIO);
   if (ack == 0)
     pinMode(m_pinDIO, OUTPUT);
-
 
   bitDelay();
   pinMode(m_pinClk, OUTPUT);
