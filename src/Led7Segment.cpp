@@ -98,10 +98,13 @@ void Led7Segment::setDots(uint8_t dots) {
     update(0, 4);
 }
 
-bool Led7Segment::showNumber(int num, uint8_t pos, uint8_t length, bool leading_zero)
+bool Led7Segment::showNumber(int num, uint8_t pos, uint8_t length, bool leading_zero, uint8_t base)
 {
     #define CHECK_SPACE { if (rpos == pos) return error(pos, length); }
 
+    if ((base < 2) || (base > 16)) {
+        return error(pos, length);
+    }
     clipLength(pos, length);
     int8_t rpos = pos + length;
     CHECK_SPACE;
@@ -110,8 +113,8 @@ bool Led7Segment::showNumber(int num, uint8_t pos, uint8_t length, bool leading_
     num = abs(num);
     do {
         CHECK_SPACE;
-        digits[--rpos] = digitToSegment[num % 10];
-        num /= 10;
+        digits[--rpos] = digitToSegment[num % base];
+        num /= base;
     } while (num);
     if (negative) {
         CHECK_SPACE;

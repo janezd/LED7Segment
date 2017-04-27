@@ -45,7 +45,7 @@ The library provides a class named `Led7Segment` with the following methods.
 <code>pos</code> (0 is the leftmost digit). If <code>zeros</code> is set to
 <code>true</code>, the display is filled with zeros instead of with blanks.</dd>
 
-<dt>showNumber(number, pos=0, length=4, leading_zeros=false)</dt>
+<dt>showNumber(number, pos=0, length=4, leading_zeros=false, base=10)</dt>
 <dd>Show <code>num</code> starting at <code>pos</code> (0 being the left-most digit)
     and using <code>length</code> digits. The number is right-aligned; if
     <code>leading_zeros</code> is set to <code>true</code>, the number is
@@ -54,6 +54,8 @@ The library provides a class named `Led7Segment` with the following methods.
 
 If the number (including the minus sign, when needed) does not fit
 into <code>length</code>, E's are shown instead of the number.</dd>
+
+Base must be between 2 (binary) and 16 (hexadecimal).
 
 <dt>setDots(mask)</dt>
 <dd>Set dots at the places corresponding to the four right-most bits.

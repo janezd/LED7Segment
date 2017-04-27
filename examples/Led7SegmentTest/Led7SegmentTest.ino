@@ -89,6 +89,17 @@ void setup() {
         display.clearDisplay(i, 1);
     }
 
+    // Show number 42 in different bases
+    for(int i = 2; i < 18; i++) {
+        display.showNumber(42, 0, 4, true, i);
+        delay(500);
+    }
+
+    // Show number 10 in different bases
+    for(int i = 0; i < 17; i++) {
+        display.showNumber(10, 0, 4, true, i);
+        delay(500);
+    }
 
     // Scroll the 'donE' from the right
     for(int i = 3; i >= 0; i--) {

@@ -61,14 +61,15 @@ public:
   //! @param dots Mask for dots; the rigthmost bit corresponds to the rightmost dot
   void setDots(uint8_t dots);
 
-  //! Display a decimal number
+  //! Display a decimal number. Return false if there is not enough space.
   //!
   //! @param num The number to be shown
   //! @param pos The position most significant digit (0 - leftmost, 3 - rightmost)
   //! @param length The number of digits to set. The user must ensure that the width is sufficient
   //!        for the given number
   //! @param leading_zero If true, leading zeros are displayed. Otherwise leading digits are blank
-  bool showNumber(int num, uint8_t pos=0, uint8_t length=4, bool leading_zero=false);
+  //! @param base The number base; 2-16; default is 10
+  bool showNumber(int num, uint8_t pos=0, uint8_t length=4, bool leading_zero=false, uint8_t base=10);
 
   void setSegments(uint8_t data[], uint8_t pos=0, uint8_t length=4);
 
